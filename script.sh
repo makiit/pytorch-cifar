@@ -1,7 +1,27 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
+#SBATCH --job-name=test-job
+#### Change account below
+#SBATCH --account=ddp390
+#SBATCH --partition=gpu-shared
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=10
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=96G
+#SBATCH --gpus=1
+#SBATCH --time=01:00:00
+#SBATCH --output=output.o%j.%N
+
+# load the environments needed
 
 module purge
-module load slurm # Simple Linux Utility for Resource Management (SLURM) batch environment
+module load slurm
+module load gpu
+module load cuda10.2/toolkit/10.2.89
+module list
 
-# gpu
-srun --partition=gpu-debug --pty --account=ddp390 --ntasks-per-node=10 --nodes=1 --mem=96G --gpus=1 -t 00:05:00 --wait=0 --export=ALL /bin/bash
+nvidia-smi
+nvcc -V
+
+
+# run your code
+python main.py
